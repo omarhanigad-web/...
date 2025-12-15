@@ -1,0 +1,71 @@
+
+from turtle import Turtle, Screen
+import random
+window=Screen()
+window.bgcolor("white")
+window.setup(1000,500)
+omar=Turtle()
+ahmed=Turtle()
+reem=Turtle()
+add=Turtle()
+add.hideturtle()
+def turtle_shape(name):
+    name.shape("turtle")
+def turtle_color(turtle,color):
+    turtle.color(color)
+
+user=window.textinput(title="(reem,omar,ahmed)",prompt="choose one:").lower()
+turtle_shape(omar)
+turtle_shape(ahmed)
+turtle_shape(reem)
+turtle_color(omar,"red")
+turtle_color(ahmed,"green")
+turtle_color(reem,"pink")
+
+def penup(name):
+    name.penup()
+def pendown(name):
+    name.pendown()
+def fastest(name):
+    name.speed("fastest")
+def hide(name):
+    name.hideturtle()
+penup(omar)
+penup(ahmed)
+penup(reem)
+fastest(omar)
+fastest(ahmed)
+fastest(reem)
+omar.goto(-500,100)
+ahmed.goto(-500,0)
+reem.goto(-500,-100)
+pendown(omar)
+pendown(ahmed)
+pendown(reem)
+while omar.xcor() < 500 and ahmed.xcor() < 500 and reem.xcor() < 500:
+    omar.forward(random.randint(5,20))
+    ahmed.forward(random.randint(5,20))
+    reem.forward(random.randint(5,20))
+if omar.xcor() >= 500:
+    winner = "omar"
+elif ahmed.xcor() >= 500:
+    winner = "ahmed"
+else:
+    winner = "reem"
+
+
+if user in ["reem","ريم"]:
+    user_choice="reem"
+elif user in ["ahmed", "احمد"]:
+    user_choice="ahmed"
+elif user in ["omar","عمر"]:
+    user_choice="omar"
+else:
+    user_choice=None
+if user_choice==winner:
+    window.bgcolor("green")
+    add.write("you win",font=("arial",18,"bold"),align="center")
+else:
+    window.bgcolor("red")
+    add.write(f"you lose,{winner} is the winner",font=("arial",18,"bold"),align="center")  
+window.exitonclick()
