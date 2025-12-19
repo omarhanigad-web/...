@@ -1,0 +1,145 @@
+
+import turtle
+import time
+import random
+
+delay=0.1
+score=0
+high_score=0
+
+#creat the screen
+root=turtle.Screen()
+root.title("snake game by omar")
+root.bgcolor("#3240a8")
+#width,height screen
+root.setup(width=500,height=500)
+#desaplle window change
+root.cv._rootwindow.resizable(False,False)
+root.tracer(0)
+
+#head
+head=turtle.Turtle()
+head.penup()
+head.shape("square")
+head.color("white")
+head.penup()
+head.speed(0)
+head.goto(0,0)
+head.direction="Stop"
+
+#food
+food=turtle.Turtle()
+colour=random.choice(["red","green","black"])
+shape=random.choice(["square","circle"])
+food.color(colour)
+food.shape(shape)
+food.penup()
+food.speed(0)
+food.goto(0,100)
+# type th score 
+pen=turtle.Turtle()
+pen.shape("square")
+pen.color("black")
+pen.speed(0)
+pen.goto(0,200)
+pen.hideturtle()
+pen.write("Score:0    high score=0",align="center",font=["Arial",23,"bold"])
+
+# direction
+def goup():
+    if head.direction!="down":
+        head.direction="up"
+def godown():
+    if head.direction!="up":
+        head.direction="down"
+def goleft():
+    if head.direction!="right":
+        head.direction="left"
+def goright():
+    if head.direction!="left":
+        head.direction="right"
+def move():
+    if head.direction =="up":
+        y=head.ycor()
+        head.sety(y+20)
+    if head.direction == "down":
+        y=head.ycor()
+        head.sety(y-20)
+    if head.direction == "right":
+        x=head.xcor()
+        head.setx(x+20)
+    if head.direction =="left":
+        x=head.xcor()
+        head.setx(x-20)
+
+#the snake
+root.listen()
+root.onkeypress(goup,"w")
+root.onkeypress(godown,"s")
+root.onkeypress(goright,"d")
+root.onkeypress(goleft,"a")
+
+segments=[]
+
+#main gameplay
+while True:
+    root.update()
+    if head.xcor()>240 or head.xcor()<-240 or head.ycor()>240 or head.ycor()<-240 :
+        time.sleep(1)
+        head.goto(0,0)
+        head.direction="Stop"
+        food.color(colour)
+        food.shape(shape)
+        for segment in segments:
+            segment.hideturtle()
+        segments.clear()
+        score=0
+        delay=0.1
+        pen.clear()
+        pen.write(f"Score{score}  high score:{high_score}",align="center",font=["Arial",23,"bold"])
+
+    #check if it eat food
+    if head.distance(food)<20:
+        x=random.randint(-240,240)
+        y=random.randint(-240,240)
+        food.goto(x,y)
+
+        #make a segment
+        new_segment=turtle.Turtle()
+        new_segment.shape("square")
+        new_segment.color("orange")
+        new_segment.penup()
+        segments.append(new_segment)
+        delay=max(0.05,delay - 0.001)
+        score+=10
+        if score >= high_score:
+            high_score=score
+        pen.clear()
+        pen.write(f"Score{score}  high score:{high_score}",align="center",font=["Arial",23,"bold"])
+    for index in range(len(segments)-1,0,-1):
+        x=segments[index-1].xcor()
+        y=segments[index-1].ycor()
+        segments[index].goto(x,y)
+    if len(segments)>0:
+        x=head.xcor()
+        y=head.ycor()
+        segments[0].goto(x,y)
+    move()
+    for segment in segments:
+        if segment.distance(head)<20:
+            time.sleep(1)
+            head.goto(0,0)
+            head.direction="Stop"
+            food.color(colour)
+            food.shape(shape)
+            for segment in segments:
+                segment.hideturtle()
+            segments.clear()
+            score=0
+            delay=0.1
+            pen.clear()
+            pen.write(f"Score{score}  high score:{high_score}",align="center",font=["Arial",23,"bold"])
+
+    time.sleep(delay)
+
+root.mainloop()
