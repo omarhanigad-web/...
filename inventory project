@@ -1,0 +1,192 @@
+import tkinter
+import tkinter as tk
+from tkinter import messagebox
+import sqlite3
+from tkinter import messagebox
+from tkinter import ttk
+root=tk.Tk()
+root.geometry("500x500")
+
+db=sqlite3.connect("inventory_new.db")
+cur=db.cursor()
+cur.execute("""
+CREATE TABLE IF NOT EXISTS inventory_new(
+    name TEXT NOT NULL,
+    price FLOAT NOT NULL,
+    rate FLOAT NOT NULL,
+    id INTEGER NOT NULL
+)
+""")
+
+
+
+
+name=tk.Label(root,text="Name:")
+name.grid(column=0,row=0)
+
+entry_name=tk.Entry(root)
+entry_name.grid(row=0,column=1)
+
+price=tk.Label(root,text="Price:")
+price.grid(column=0,row=1)
+
+entry_price=tk.Entry(root)
+entry_price.grid(row=1,column=1)
+rate=tk.Label(root,text="RATE:")
+rate.grid(column=0,row=2)
+
+entry_rate=tk.Entry(root)
+entry_rate.grid(row=2,column=1)
+
+id=tk.Label(root,text="ID:")
+id.grid(column=0,row=3)
+
+product_id=tk.Entry(root)
+product_id.grid(row=3,column=1)
+
+
+def Button_save():
+    
+
+  
+
+
+
+    if not entry_name.get() or not entry_price.get() or not entry_rate.get() or not product_id.get():
+        messagebox.showerror("ERROR","you must full all field",parent=root)
+        return
+    
+    elif entry_name.get().isdigit():
+        messagebox.showerror("ERROR","name must be letter!",parent=root)
+        return
+    elif len(product_id.get())!= 10:
+        messagebox.showerror("ERROR","the id most be 10 !",parent=root)
+        return
+
+
+ 
+
+    cur.execute("INSERT INTO inventory_new(name,price,rate,id) VALUES(?,?,?,?)",(entry_name.get(),entry_price.get(),entry_rate.get(),product_id.get()))
+
+    entry_name.delete(0,tk.END)
+    entry_price.delete(0,tk.END)
+    entry_rate.delete(0,tk.END)
+    product_id.delete(0,tk.END)
+    messagebox.showinfo("SUCCESS","your data saved press show all to see the products!",parent=root)
+def Button_all():
+    win=tk.Toplevel(root)
+    win.title("students")
+    win.geometry("300x300")
+    cur.execute("SELECT rowid,* FROM inventory_new")
+    datas=cur.fetchall()
+    for data in datas:
+        tk.Label(win,text=str(data)).grid()
+
+
+
+def Button_edit():
+    win=tk.Toplevel(root)
+    win.title("edit students")
+    win.geometry("400x400")
+    search_label=tk.Label(win,text="enter the id:")
+    search_label.grid(row=0,column=0)
+
+    entre_searched_id=tk.Entry(win)
+    entre_searched_id.grid(row=0,column=1)
+
+    new_name=tk.Label(win,text="new Name:")
+    new_name.grid(column=0,row=1)
+
+    new_entry_name=tk.Entry(win)
+    new_entry_name.grid(row=1,column=1)
+
+    new_price=tk.Label(win,text="new Price:")
+    new_price.grid(column=0,row=2)
+
+    new_entry_price=tk.Entry(win)
+    new_entry_price.grid(row=2,column=1)
+
+    new_rate=tk.Label(win,text="new RATE:")
+    new_rate.grid(column=0,row=3)
+
+    new_entry_rate=tk.Entry(win)
+    new_entry_rate.grid(row=3,column=1)
+
+    new_id=tk.Label(win,text="new ID:")
+    new_id.grid(column=0,row=4)
+
+    new_entry_id=tk.Entry(win)
+    new_entry_id.grid(column=1,row=4)
+
+
+    def update():
+
+
+        if not new_entry_id.get() or not new_entry_price.get() or not new_entry_name.get() or not new_entry_rate.get():
+            messagebox.showerror("ERROR","all field must be full")
+            return
+        
+        elif not entre_searched_id.get():
+            messagebox.showerror("ERROR","you must enter your old id!",parent=win)
+            return
+        
+        elif len(new_entry_id.get())!=10:
+            messagebox.showerror("ERROR","must id be 10!")
+            return
+        elif new_entry_name.get().isdigit():
+            messagebox.showerror("ERROR","name must be letter!",parent=win)
+            return
+
+        cur.execute("UPDATE inventory_new SET name=?,price=?,rate=?,id=? WHERE id=?",(new_entry_name.get(),new_entry_price.get(),new_entry_rate.get(),new_entry_id.get(),entre_searched_id.get()))
+        entre_searched_id.delete(0,tk.END)
+        new_entry_name.delete(0,tk.END)
+        new_entry_price.delete(0,tk.END)
+        new_entry_rate.delete(0,tk.END)
+        new_entry_id.delete(0,tk.END)
+    save_update=tk.Button(win,text="save update",command=update)
+    save_update.grid(row=5,column=0)
+    
+
+def Button_delete():
+    win=tk.Toplevel(root)
+    win.title("delete student")
+    win.geometry("400x300")
+    label_id_delete=tk.Label(win,text="Enter the id of the poduct you want to delete:").grid(row=0,column=0)
+    id_delete=tk.Entry(win)
+    id_delete.grid(row=0,column=1)
+    def delet():
+        if not id_delete.get():
+            messagebox.showerror("ERROR","must enter id!",parent=win)
+            return
+        cur.execute("DELETE FROM inventory_new WHERE id =?",(id_delete.get(),)) 
+        db.commit()
+
+
+        if  cur.rowcount>0:
+            messagebox.showinfo("SUCCESS","this product deleted",parent=win)
+            
+        else:
+            messagebox.showerror("ERROR","no id found like this")
+
+        id_delete.delete(0,tk.END)
+
+    ok_button=tk.Button(win,text="ok",command=delet)
+    ok_button.grid(row=1,column=0)
+
+
+
+
+
+save=tk.Button(root,text="save",command=Button_save)
+save.grid(row=4,column=0)
+show_all=tk.Button(root,text="show_all",command=Button_all)
+show_all.grid(row=4,column=1)
+delete=tk.Button(root,text="delete",command=Button_delete)
+delete.grid(row=4,column=2)
+edit=tk.Button(root,text="edit",command=Button_edit)
+edit.grid(row=4,column=3)
+
+root.mainloop()
+
+db.commit()
+db.close()
