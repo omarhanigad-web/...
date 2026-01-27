@@ -1,0 +1,51 @@
+import math
+import pygame as py
+py.init()
+
+width,height=1000,800
+clock=py.time.Clock()
+screen=py.display.set_mode((width,height))
+py.display.set_caption("solar system")
+sun_x,sun_y=width//2,height//2
+planets = [
+    [60,  0.047, 4,  (169, 169, 169)], # عطارد
+    [90,  0.035, 9,  (255, 198, 73)],  # الزهرة
+    [130, 0.029, 10, (0, 102, 204)],   # الأرض
+    [170, 0.024, 6,  (255, 80, 80)],   # المريخ
+    [250, 0.013, 22, (255, 204, 153)], # المشتري
+    [320, 0.009, 18, (234, 214, 184)], # زحل
+    [380, 0.006, 14, (175, 238, 238)], # أورانوس
+    [430, 0.005, 14, (0, 0, 128)],     # نبتون
+    [480, 0.004, 3,  (200, 200, 200)]  # بلوتو
+]
+angles=[0]*9
+running=True
+while running:
+    for event in py.event.get():
+        if event.type== py.QUIT:
+            running=False
+    screen.fill((5,5,15))
+
+
+    py.draw.circle(screen, (255, 150, 0), (sun_x, sun_y), 45) # التوهج الخارجي
+    py.draw.circle(screen, (255, 200, 0), (sun_x, sun_y), 40) # جسم الشمس
+    py.draw.circle(screen, (255, 255, 200), (sun_x, sun_y), 35)
+
+
+    
+    for i in range(len(planets)):
+        dist,speed,size,colour=planets[i]
+
+        angles[i]+=speed
+        x=sun_x+dist*math.cos(angles[i])
+        y=sun_y+dist*math.sin(angles[i])
+
+        py.draw.circle(screen,(30,30,50),(sun_x,sun_y),dist,1)
+
+        py.draw.circle(screen,colour,(int(x),int(y)),size)
+        if i == 5:
+            py.draw.ellipse(screen,(150,150,100),(int(x)-size*4,int(y)-size,size*8,size*2),2)
+
+    py.display.flip()
+    clock.tick(60)
+py.quit()
